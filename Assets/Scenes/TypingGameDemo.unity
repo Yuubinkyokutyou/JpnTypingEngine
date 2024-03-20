@@ -240,7 +240,7 @@ MonoBehaviour:
   questionDisplay: {fileID: 659607927}
   inputKeyProvider: {fileID: 659607928}
   hiraganaQuestionList:
-  - "\u3042\u3044\u3046\u3048\u304A"
+  - "\u3046\u3042\u3044\u3046\u3048\u304A"
   - "\u3042\u3044\u3046\u3048\u304A"
   - "\u3042\u3044\u3046\u3048\u304A"
   - "\u3042\u3044\u3046\u3048\u304A"

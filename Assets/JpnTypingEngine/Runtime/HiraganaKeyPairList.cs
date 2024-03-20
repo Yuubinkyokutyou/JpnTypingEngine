@@ -30,10 +30,10 @@ namespace JpnTypingEngine
         # if UNITY_EDITOR
         public void OnValidate()
         {
-            int maxHiraganaLength = HiraganaKeyPairs
+            MaxHiraganaLength = HiraganaKeyPairs
                 .SelectMany(hiraganaKeyPair => hiraganaKeyPair.inputPairs)
                 .Max(inputPair => inputPair.Length);
-
+            
             UnityEditor.EditorUtility.SetDirty(this);
         }
         #endif

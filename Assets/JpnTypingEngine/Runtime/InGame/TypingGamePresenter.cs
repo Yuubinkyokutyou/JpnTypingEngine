@@ -66,15 +66,20 @@ namespace JpnTypingEngine.InGame
                 _currentSectionInputtedKey.Append(key);
                 try
                 {
-                    Debug.Log("_currentSectionInputtedKey:"+_currentSectionInputtedKey.ToString()+
-                                " _inputtedHiragana:"+_inputtedHiragana);
                     SetSuggestSections(_inputtedHiragana.Length, _currentSectionInputtedKey);
                 }
-                catch
+                catch(Exception e)
                 {
                     //追加したキーが、ミスのため最後のキーを削除
                     _currentSectionInputtedKey.Remove(_currentSectionInputtedKey.Length - 1, 1);
-                    Debug.Log("miss"+_currentSectionInputtedKey.ToString());
+                   
+# if UNITY_EDITOR
+                    //エラーが発生した場合、エラーの行数を表示
+                    Debug.LogError(e.Message);
+                    System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(e, true);
+                    int lineNumber = stackTrace.GetFrame(0).GetFileLineNumber();
+                    Debug.LogError("lineNumber:"+lineNumber);
+#endif
                 }
             }
             
@@ -82,7 +87,6 @@ namespace JpnTypingEngine.InGame
             //セクションの入力が完了した場合
             if (_currentSectionInputtedKey.Length == _currentSectionSelectKey.Length)
             {
-                Debug.Log("セクション入力完了"+_currentSectionInputtedKey.ToString()+" "+_currentSectionSelectKey);
                 _inputtedKeys.Append(_currentSectionInputtedKey);
                 _currentSectionInputtedKey.Clear();
                 _inputtedHiragana.Append(_suggestHiraganaSections[0].Hiragana);
@@ -113,7 +117,6 @@ namespace JpnTypingEngine.InGame
 
         private void SetQuestion(string hiragana)
         {
-            Debug.Log("clear");
             _inputtedHiragana.Clear();
             _inputtedKeys.Clear();
             _currentSectionInputtedKey.Clear();
@@ -178,20 +181,19 @@ namespace JpnTypingEngine.InGame
             {
                 foreach (var inputPair in hiraganaSection.InputPairs)
                 {                    
-                    Debug.Log("inputPair:"+inputPair);
                     for (int i = 0; i < newSectionInputtedKey.Length; i++)
                     {
-                        Debug.Log(inputPair[i]+" "+newSectionInputtedKey[i]);
+                        if (inputPair.Length <= i) continue;
+                        
                         //一文字ずつチェックし、すべて一致していた場合追加
-                        if (inputPair[i] == newSectionInputtedKey[i]
-                            && i == newSectionInputtedKey.Length - 1)
+                        if (inputPair[i] == newSectionInputtedKey[i] && i == newSectionInputtedKey.Length - 1)
                         {
                             return (hiraganaSection,inputPair);
                         }
                     }
                 }
             }
-            
+
             throw new Exception("値が見つかりませんでした");
         }
         
