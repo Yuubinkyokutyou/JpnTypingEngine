@@ -12,7 +12,7 @@ namespace JpnTypingEngine
     public class HiraganaToInputConverter : IDisposable
     {
         readonly HiraganaKeyPairList _hiraganaKeyPairList;
-        private InputCombination _inputCombination = new InputCombination();
+        public readonly InputCombination InputCombination = new InputCombination();
         private readonly List<HiraganaSection> _hiraganaSections = new List<HiraganaSection>();
         
         //Convertメソッドで使用するStringBuilder
@@ -95,7 +95,7 @@ namespace JpnTypingEngine
             }
             
             //「っ」の処理で必要、先にセット
-            _inputCombination.SetValue(inputHiragana, _hiraganaSections);
+            InputCombination.SetValue(inputHiragana, _hiraganaSections);
 
             bool isSmallTuUpdate = false;
             //小さい「っ」の文字の例外処理
@@ -118,7 +118,7 @@ namespace JpnTypingEngine
                     }
                     
                     //つ　の後の文字
-                    var nextHiraganaSections = _inputCombination.GetHiraganaSections(i + tuCount);
+                    var nextHiraganaSections = InputCombination.GetHiraganaSections(i + tuCount);
 
                     foreach (var nextHiraganaSection in nextHiraganaSections)
                     {
@@ -148,15 +148,15 @@ namespace JpnTypingEngine
             
             if (isSmallTuUpdate)
             {
-                _inputCombination.SetValue(inputHiragana, _hiraganaSections);
+                InputCombination.SetValue(inputHiragana, _hiraganaSections);
             }
 
-            return _inputCombination;
+            return InputCombination;
         }
 
         public void Dispose()
         {
-            _inputCombination?.Dispose();
+            InputCombination?.Dispose();
             
             ReleaseHiraganaSectionsListPool();
         }
