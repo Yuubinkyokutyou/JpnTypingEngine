@@ -1,0 +1,16 @@
+{
+    "name": "JpnTypingEngine.Demo",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5e688d6a563f5594f8729b7f9dee9d2a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
