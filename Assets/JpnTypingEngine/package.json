@@ -1,0 +1,21 @@
+﻿{
+  "name": "com.yuubin.jpn-typing-engine",
+  "displayName": "JPN Typing Engine",
+  "version": "1.0.0",
+  "unity": "2022.3",
+  "description": "A simple Japanese typing engine for Unity.",
+  "author": {
+    "name": "Yuubinkyokutyou",
+    "url": "https://github.com/Yuubinkyokutyou"
+  },
+  "samples": [
+    {
+      "displayName": "Typing Game Demo",
+      "description": "Typing Game Sample",
+      "path": "JpnTypingEngine/Demo"
+    }
+  ]
+  ,
+  "dependencies": {
+  }
+}
