@@ -14,7 +14,18 @@ namespace JpnTypingEngine
         private InputCombination _inputCombination = new InputCombination();
         private readonly List<HiraganaSection> _hiraganaSections = new List<HiraganaSection>();
         
+        //Convertメソッドで使用するStringBuilder
         StringBuilder _sectionHiragana = new StringBuilder();
+        
+        //「ん」の後の文字がこれでない場合「n」の入力組み合わせを追加
+        //母音、ナ行、ヤ行、ニャ行
+        private string[] NBeforeHiraganas = new string[]
+        {
+            "あ", "い", "う", "え", "お",
+            "な", "に", "ぬ", "ね", "の",
+            "や", "ゆ", "よ",
+            "にゃ", "にゅ", "にょ",
+        };
         
         public HiraganaToInputConverter(HiraganaKeyPairList hiraganaKeyPairList)
         {
@@ -31,9 +42,9 @@ namespace JpnTypingEngine
             
             //ひらがなの文章を、区切りと入力組み合わせに変換
             
-            //_hiraganaKeyPairListから変換する
             for (var i = 0; i < inputHiragana.Length; i++)
             {
+                //_hiraganaKeyPairListから変換するため、セクションの最大文字数分繰り返す
                 for (var j = 0; j < _hiraganaKeyPairList.MaxHiraganaLength; j++)
                 {
                     if (i + j + 1 > inputHiragana.Length) break;
@@ -51,13 +62,40 @@ namespace JpnTypingEngine
                         inputPairs.Add(inputPair);
                     }
                     
+                    
+                    //「ん」の文字の例外処理
+                    //最後の文字の場合は追加しない
+                    if (j == 0 &&
+                        inputHiragana[i] == 'ん' && 
+                        i != inputHiragana.Length - 1)
+                    {
+                        for (var n = 0; n < NBeforeHiraganas.Length; n++)
+                        {
+                            var nBeforeHiragana = NBeforeHiraganas[n];
+                            //inputHiraganaのnBeforeHiragana.length文字後が存在するか
+                            //inputHiraganaの後の文字がnBeforeHiraganaでないか
+                            //TODO:Substringをキャッシュ出来そう
+                            if (i + nBeforeHiragana.Length < inputHiragana.Length &&
+                                inputHiragana.Substring(i + 1, nBeforeHiragana.Length) == nBeforeHiragana)
+                            {
+                                break;
+                            }
+                            
+                            //すべて不一致だった場合、nを追加
+                            if(n==NBeforeHiraganas.Length-1)
+                            {
+                                inputPairs.Insert(0, "n");
+                            }
+                        }
+                    }
+                    
                     _hiraganaSections.Add(new HiraganaSection(_sectionHiragana.ToString(), i, inputPairs));
                 }
             }
             
             
             
-
+            
             return _inputCombination.SetValue(inputHiragana, _hiraganaSections);
         }
 
