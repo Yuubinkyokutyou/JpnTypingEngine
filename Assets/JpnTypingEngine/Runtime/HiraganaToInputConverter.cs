@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 using UnityEngine.Pool;
 
 namespace JpnTypingEngine
@@ -35,7 +36,7 @@ namespace JpnTypingEngine
         
         public InputCombination Convert(string inputHiragana)
         {
-            ReleaseListPool();
+            ReleaseHiraganaSectionsListPool();
             
             _hiraganaSections.Clear();
             
@@ -82,7 +83,7 @@ namespace JpnTypingEngine
                             }
                             
                             //すべて不一致だった場合、nを追加
-                            if(n==NBeforeHiraganas.Length-1)
+                            if (n == NBeforeHiraganas.Length - 1)
                             {
                                 inputPairs.Insert(0, "n");
                             }
@@ -93,22 +94,76 @@ namespace JpnTypingEngine
                 }
             }
             
+            //「っ」の処理で必要、先にセット
+            _inputCombination.SetValue(inputHiragana, _hiraganaSections);
+
+            bool isSmallTuUpdate = false;
+            //小さい「っ」の文字の例外処理
+            for (var i = 0; i < inputHiragana.Length; i++)
+            {
+                if (inputHiragana[i] == 'っ')
+                {
+                    //「っ」が何文字続くか
+                    int tuCount = 1;
+                    for (int j = i+1; j < inputHiragana.Length; j++)
+                    {
+                        if (inputHiragana[j] == 'っ')
+                        {
+                            tuCount++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    
+                    //つ　の後の文字
+                    var nextHiraganaSections = _inputCombination.GetHiraganaSections(i + tuCount);
+
+                    foreach (var nextHiraganaSection in nextHiraganaSections)
+                    {
+                        var inputPairs = ListPool<string>.Get();
+                        //すべてのInputPairsの先頭の子音をtuCount分追加。ただし一文字で入力できるものは追加しない
+                        foreach (var inputPair in nextHiraganaSection.InputPairs)
+                        {
+                            if (inputPair.Length == 1) continue;
+                            inputPairs.Add(new string(inputPair[0], tuCount) + inputPair);
+                        }
+                        isSmallTuUpdate = true;
+                        
+                    # if UNITY_EDITOR
+                        Debug.Log("inputPairs:" + string.Join(",", inputPairs) + "hiragana" + new string('っ', tuCount) +
+                                  nextHiraganaSection.Hiragana);
+                    #endif
+                        
+                        //最初に追加
+                        _hiraganaSections.Insert(0,new HiraganaSection(
+                            new string('っ', tuCount) + nextHiraganaSection.Hiragana, i, inputPairs)
+                        );
+                    }
+                    //連続した「っ」を飛ばす
+                    i += tuCount-1;
+                }
+            }
             
-            
-            
-            return _inputCombination.SetValue(inputHiragana, _hiraganaSections);
+            if (isSmallTuUpdate)
+            {
+                _inputCombination.SetValue(inputHiragana, _hiraganaSections);
+            }
+
+            return _inputCombination;
         }
 
         public void Dispose()
         {
             _inputCombination?.Dispose();
             
-            ReleaseListPool();
+            ReleaseHiraganaSectionsListPool();
         }
         
         
         //ListPoolでのリリース
-        void ReleaseListPool()
+        void ReleaseHiraganaSectionsListPool()
         {
             foreach (var variable in _hiraganaSections)
             {
