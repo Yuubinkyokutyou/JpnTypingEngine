@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace JpnTypingEngine.InGame
+namespace JpnTypingEngine.Samples.Demo
 {
     public class QuestionDisplay : MonoBehaviour
     {

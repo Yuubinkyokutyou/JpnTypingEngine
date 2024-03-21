@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace JpnTypingEngine.InGame
+namespace JpnTypingEngine.Samples.Demo
 {
     public class TypingGamePresenter : MonoBehaviour
     {
