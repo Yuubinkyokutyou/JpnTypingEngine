@@ -24,8 +24,19 @@ namespace JpnTypingEngine
         
         public InputCombination Convert(string inputHiragana)
         {
+            //ListPoolでのリリース
+            foreach (var variable in _hiraganaSections)
+            {
+                //release
+                ListPool<string>.Release(variable.InputPairs);
+            }
+            
             _hiraganaSections.Clear();
             
+            
+            //ひらがなの文章を、区切りと入力組み合わせに変換
+            
+            //_hiraganaKeyPairList
             for (var i = 0; i < inputHiragana.Length; i++)
             {
                 for (var j = 0; j < _hiraganaKeyPairList.MaxHiraganaLength; j++)
@@ -38,8 +49,8 @@ namespace JpnTypingEngine
                     
                     if(inputPairList == null) continue;
                     
-                    //TODO:ListPoolを使って
-                    var inputPairs = new List<string>();
+                    //ListPool使用
+                    var inputPairs = ListPool<string>.Get();
                     foreach (var inputPair in inputPairList)
                     {
                         inputPairs.Add(inputPair);
@@ -48,6 +59,7 @@ namespace JpnTypingEngine
                     _hiraganaSections.Add(new HiraganaSection(_sectionHiragana.ToString(), i, inputPairs));
                 }
             }
+            
 
             return _inputCombination.SetValue(inputHiragana, _hiraganaSections);
         }
