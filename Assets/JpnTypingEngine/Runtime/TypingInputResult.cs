@@ -3,7 +3,6 @@ using System.Text;
 
 namespace JpnTypingEngine
 {
-    [Serializable]
     public struct TypingInputResult
     {
         //入力が完了したかどうか

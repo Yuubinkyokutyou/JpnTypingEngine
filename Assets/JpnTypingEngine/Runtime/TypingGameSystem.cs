@@ -157,6 +157,8 @@ namespace JpnTypingEngine
             {
                 var hiraganaSections = InputCombination.GetHiraganaSections(suggestIndex);
                 
+                if(hiraganaSections　== null) throw new Exception("値が見つかりませんでした。不正な値が含まれている可能性があります。");
+                
                 //入力ひらがな文字が0文字のセクションは割り当てない（nの例外の時のため）
                 HiraganaSection setSection = null;
                 foreach (var variable in hiraganaSections)

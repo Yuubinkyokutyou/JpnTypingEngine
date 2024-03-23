@@ -8,7 +8,7 @@ namespace JpnTypingEngine.Samples.Demo
         [SerializeField] private QuestionDisplay questionDisplay;
         [SerializeField] InputKeyProvider inputKeyProvider;
         [SerializeField] List<string> hiraganaQuestionList;
-
+        
         private TypingGameSystem _typingGameSystem;
         
         int _questionIndex = 0;
@@ -37,22 +37,24 @@ namespace JpnTypingEngine.Samples.Demo
                 SetQuestion(hiraganaQuestionList[_questionIndex%hiraganaQuestionList.Count]);
                 return;
             }
+            //ミスの時は、文字を揺らす
+            if (!result.IsSuccess)
+            {
+                questionDisplay.TypingMiss();
+            }
             
             UpdateView(result);
         }
 
         private void UpdateView(TypingInputResult typingInputResult)
         {
-            //jsonにしてログ
-            Debug.Log(
-                typingInputResult.InputtedSectionKeys
-                );
             questionDisplay.UpdateInputKey(
                 typingInputResult.ViewInputKeys.ToString(),
                 typingInputResult.InputtedKeyLength,
-                hiraganaQuestionList[_questionIndex],
+                hiraganaQuestionList[_questionIndex%hiraganaQuestionList.Count],
                 typingInputResult.InputtedHiragana.Length);
         }
+        
         
         
         private void OnDestroy()

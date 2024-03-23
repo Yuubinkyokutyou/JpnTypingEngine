@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace JpnTypingEngine.Samples.Demo
 {
@@ -13,6 +15,19 @@ namespace JpnTypingEngine.Samples.Demo
         [SerializeField]
         Color32 inputedTextColor = new Color32(0, 0, 0, 255);
         
+        
+        // 揺らす強度
+        [SerializeField] private float shakeAmount;
+        // 揺らす時間
+        [SerializeField] private float shakeDuration;
+        
+        private Vector3 _initialPosition;
+
+        private void Start()
+        {
+            _initialPosition = hiraganaText.transform.localPosition;
+        }
+
         public void SetQuestion(string hiragana,string inputKey)
         {
             inputKeyText.text = inputKey;
@@ -30,6 +45,29 @@ namespace JpnTypingEngine.Samples.Demo
             var inputedHiraganaText = hiragana.Substring(0, inputtedHiragana);
             var notInputedHiraganaText = hiragana.Substring(inputtedHiragana);
             this.hiraganaText.text = $"<color=#{ColorUtility.ToHtmlStringRGB(inputedTextColor)}>{inputedHiraganaText}</color>{notInputedHiraganaText}";
+        }
+        
+        public void TypingMiss()
+        {
+            StartCoroutine(Shake());
+        }
+        
+        private IEnumerator Shake()
+        {
+            float elapsedTime = 0f;
+
+            while (elapsedTime < shakeDuration)
+            {
+                float x = Random.Range(-1f, 1f) * shakeAmount;
+            
+                hiraganaText.transform.localPosition = _initialPosition + new Vector3(x, 0, 0);
+
+                elapsedTime += Time.deltaTime;
+
+                yield return null;
+            }
+
+            hiraganaText.transform.localPosition = _initialPosition;
         }
     }
 }
