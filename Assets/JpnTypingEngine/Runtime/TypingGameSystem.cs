@@ -67,7 +67,6 @@ namespace JpnTypingEngine
                 {
                     SetSuggestSections(_inputtedHiragana.Length, _currentSectionInputtedKey);
                     typingInputResult.InputKeyChange = true;
-                    typingInputResult.IsSuccess = true;
                 }
                 catch(Exception e)
                 {
@@ -132,33 +131,37 @@ namespace JpnTypingEngine
         
         /// <summary>
         /// _suggestHiraganaSectionsに予測のセクションを格納
+        /// _currentSectionSelectKeyに次のセクションの選択キーを格納
         /// </summary>
-        /// <param name="inputtedHiraganaLength"></param>
-        /// <param name="newSectionInputtedKey"></param>
-        private void SetSuggestSections(int inputtedHiraganaLength,StringBuilder newSectionInputtedKey = null)
+        private void SetSuggestSections(int inputtedHiraganaLength,StringBuilder newSectionInputtedKey)
         {
-            
             int suggestIndex = inputtedHiraganaLength;
 
-            if (newSectionInputtedKey != null)
+            //現在のセクションで何かしらの入力がある場合、組み合わせを検索する
+            var result = GetSectionByInputKey(newSectionInputtedKey, inputtedHiraganaLength);
+            //GetSectionByInputKeyでException（タイプミス）が発生した場合ClearしないためにここでClear
+            _suggestHiraganaSections.Clear();
+            _suggestHiraganaSections.Add(result.section);
+            suggestIndex += result.section.Hiragana.Length;
+            _currentSectionSelectKey = result.selectInputPair;
+            SetRemainSections(suggestIndex);
+        }
+
+        private void SetSuggestSections(int inputtedHiraganaLength)
+        {
+            _suggestHiraganaSections.Clear();
+            SetRemainSections(inputtedHiraganaLength);
+            _currentSectionSelectKey = _suggestHiraganaSections[0].InputPairs[0];
+        }
+
+        
+        void SetRemainSections(int startHiraganaIndex)
+        {
+            while (startHiraganaIndex < InputCombination.Hiragana.Length)
             {
-                //現在のセクションで何かしらの入力がある場合、組み合わせを検索する
-                var result = GetSectionByInputKey(newSectionInputtedKey, inputtedHiraganaLength);
-                //GetSectionByInputKeyでException（タイプミス）が発生した場合ClearしないためにここでClear
-                _suggestHiraganaSections.Clear();
-                _suggestHiraganaSections.Add(result.section);
-                suggestIndex += result.section.Hiragana.Length;
-            }
-            else
-            {
-                _suggestHiraganaSections.Clear();
-            }
-            
-            while (suggestIndex < InputCombination.Hiragana.Length)
-            {
-                var hiraganaSections = InputCombination.GetHiraganaSections(suggestIndex);
+                var hiraganaSections = InputCombination.GetHiraganaSections(startHiraganaIndex);
                 
-                if(hiraganaSections　== null) throw new Exception("値が見つかりませんでした。不正な値が含まれている可能性があります。");
+                if(hiraganaSections.Count == 0) throw new Exception("値が見つかりませんでした.");
                 
                 //入力ひらがな文字が0文字のセクションは割り当てない（nの例外の時のため）
                 HiraganaSection setSection = null;
@@ -172,10 +175,8 @@ namespace JpnTypingEngine
                 }
                 
                 _suggestHiraganaSections.Add(setSection);
-                suggestIndex += setSection.Hiragana.Length;
+                startHiraganaIndex += setSection.Hiragana.Length;
             }
-            
-            _currentSectionSelectKey = _suggestHiraganaSections[0].InputPairs[0];
         }
         
         void SetNextSection()
