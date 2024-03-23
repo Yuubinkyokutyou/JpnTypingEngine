@@ -87,12 +87,6 @@ namespace JpnTypingEngine
             //セクションの入力が完了した場合
             if (_currentSectionInputtedKey.Length == _currentSectionSelectKey.Length)
             {
-                //「ん」を「n」一回で入力した場合
-                // if (_currentSectionSelectKey == "n")
-                // {
-                //     
-                // }
-                
                 _inputtedSectionKeys.Append(_currentSectionInputtedKey);
                 _currentSectionInputtedKey.Clear();
                 _inputtedHiragana.Append(_suggestHiraganaSections[0].Hiragana);
@@ -104,8 +98,6 @@ namespace JpnTypingEngine
                 }
                 else
                 {
-                    //SetSuggestSections(_inputtedHiragana.Length);
-                    Debug.Log("SetNextSection");
                     SetNextSection();
                 }
                 
@@ -164,8 +156,20 @@ namespace JpnTypingEngine
             while (suggestIndex < InputCombination.Hiragana.Length)
             {
                 var hiraganaSections = InputCombination.GetHiraganaSections(suggestIndex);
-                _suggestHiraganaSections.Add(hiraganaSections[0]);
-                suggestIndex += hiraganaSections[0].Hiragana.Length;
+                
+                //入力ひらがな文字が0文字のセクションは割り当てない（nの例外の時のため）
+                HiraganaSection setSection = null;
+                foreach (var variable in hiraganaSections)
+                {
+                    if (variable.Hiragana.Length > 0)
+                    {
+                        setSection = variable;
+                        break;
+                    }
+                }
+                
+                _suggestHiraganaSections.Add(setSection);
+                suggestIndex += setSection.Hiragana.Length;
             }
             
             _currentSectionSelectKey = _suggestHiraganaSections[0].InputPairs[0];

@@ -18,6 +18,13 @@ namespace JpnTypingEngine
         //Convertメソッドで使用するStringBuilder
         StringBuilder _sectionHiragana = new StringBuilder();
         
+        const string EmptyString = "";
+        
+        List<string> _nList = new List<string>()
+        {
+            "n"
+        };
+        
         //「ん」の後の文字がこれでない場合「n」の入力組み合わせを追加
         //母音、ナ行、ヤ行、ニャ行
         private string[] NBeforeHiraganas = new string[]
@@ -86,6 +93,9 @@ namespace JpnTypingEngine
                             if (n == NBeforeHiraganas.Length - 1)
                             {
                                 inputPairs.Insert(0, "n");
+                                
+                                //「ん」のn一回のときにn二回入力できるように、空のひらがなの「n」入力組み合わせを追加
+                                _hiraganaSections.Add(new HiraganaSection("", i+1, _nList));
                             }
                         }
                     }
