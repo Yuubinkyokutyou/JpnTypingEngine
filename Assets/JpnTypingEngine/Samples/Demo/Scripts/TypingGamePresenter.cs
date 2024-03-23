@@ -38,7 +38,7 @@ namespace JpnTypingEngine.Samples.Demo
                 return;
             }
             //ミスの時は、文字を揺らす
-            if (!result.IsSuccess)
+            if (result.IsMiss)
             {
                 questionDisplay.TypingMiss();
             }

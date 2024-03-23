@@ -67,6 +67,7 @@ namespace JpnTypingEngine
                 {
                     SetSuggestSections(_inputtedHiragana.Length, _currentSectionInputtedKey);
                     typingInputResult.InputKeyChange = true;
+                    typingInputResult.IsSuccess = true;
                 }
                 catch(Exception e)
                 {
