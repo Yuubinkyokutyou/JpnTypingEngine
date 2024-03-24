@@ -61,7 +61,7 @@ MonoBehaviour:
     - li
     - xi
     - lyi
-    - "xyi\r"
+    - xyi
   - Hiragana: "\u3045"
     InputPairs:
     - lu
@@ -71,7 +71,7 @@ MonoBehaviour:
     - le
     - xe
     - lye
-    - "xye\r"
+    - xye
   - Hiragana: "\u3049"
     InputPairs:
     - lo

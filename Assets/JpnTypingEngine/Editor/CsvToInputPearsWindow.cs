@@ -35,7 +35,12 @@ namespace JpnTypingEngine.Editor
                 var hiraganaKeyPairsList = new List<HiraganaKeyPair>();
                 for (var i = 0; i < afterParse.Length; i++)
                 {
-                    string[] parseByComma = afterParse[i].Split(',').Where(checkString => checkString != null && checkString.Trim().Length != 0).ToArray();
+                    string[] parseByComma = afterParse[i]
+                        .Split(',')
+                        .Where(checkString => checkString != null && checkString.Trim().Length != 0)
+                        //なぜか改行コードが含まれるため、削除
+                        .Select(word=>word.Trim('\r'))
+                        .ToArray();
 
                     //Debug.Log(afterParse[i]);
                     
