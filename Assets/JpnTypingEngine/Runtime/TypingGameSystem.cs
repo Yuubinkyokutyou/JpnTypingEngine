@@ -10,7 +10,7 @@ namespace JpnTypingEngine
     /// </summary>
     public class TypingGameSystem :IDisposable
     {
-        public TypingInputResult TypingInputResult{ get; private set; }
+        public TypingInputResult TypingInputResult;
 
         private HiraganaToInputConverter _hiraganaToInputConverter;
         private InputCombination InputCombination => _hiraganaToInputConverter.InputCombination;
@@ -46,8 +46,14 @@ namespace JpnTypingEngine
             {
                 throw new Exception("値がセットされていません");
             }
-
-            TypingInputResult typingInputResult = new(
+            //問題が終了済みの場合
+            if (_inputtedHiragana.Length == InputCombination.Hiragana.Length)
+            { 
+                throw new Exception("入力完了している状態で、入力されています。");
+            }
+            
+            
+            TypingInputResult = new(
                 _currentSectionInputtedKey,
                 _inputtedHiragana,
                 _inputtedSectionKeys,
@@ -57,7 +63,7 @@ namespace JpnTypingEngine
             //入力されたキーが、現在のセクションの選択キーと一致するか
             if (_currentSectionSelectKey[_currentSectionInputtedKey.Length] == key)
             {
-                typingInputResult.IsSuccess = true;
+                TypingInputResult.IsSuccess = true;
                 _currentSectionInputtedKey.Append(key);
             }
             else
@@ -66,13 +72,13 @@ namespace JpnTypingEngine
                 try
                 {
                     SetSuggestSections(_inputtedHiragana.Length, _currentSectionInputtedKey);
-                    typingInputResult.InputKeyChange = true;
+                    TypingInputResult.InputKeyChange = true;
                 }
                 catch(Exception e)
                 {
                     //追加したキーが、ミスのため最後のキーを削除
                     _currentSectionInputtedKey.Remove(_currentSectionInputtedKey.Length - 1, 1);
-                    typingInputResult.IsMiss = true;
+                    TypingInputResult.IsMiss = true;
 # if UNITY_EDITOR
                     //エラーが発生した場合、エラーの行数を表示
                     Debug.LogError(e.Message);
@@ -82,7 +88,6 @@ namespace JpnTypingEngine
 #endif
                 }
             }
-            
             
             //セクションの入力が完了した場合
             if (_currentSectionInputtedKey.Length == _currentSectionSelectKey.Length)
@@ -94,7 +99,7 @@ namespace JpnTypingEngine
                 //文章を入力し終えた場合
                 if (_inputtedHiragana.Length == InputCombination.Hiragana.Length)
                 {
-                    typingInputResult.IsFinished = true;
+                    TypingInputResult.IsFinished = true;
                 }
                 else
                 {
@@ -105,7 +110,7 @@ namespace JpnTypingEngine
 
 
             GetAndSetViewInputKeys();
-            return typingInputResult;
+            return TypingInputResult;
         }
         
         public TypingInputResult SetQuestion(string hiragana)
@@ -121,12 +126,14 @@ namespace JpnTypingEngine
             
             GetAndSetViewInputKeys();
             
-            return new TypingInputResult(
+            TypingInputResult = new TypingInputResult(
                 _currentSectionInputtedKey,
                 _inputtedHiragana,
                 _inputtedSectionKeys,
                 _viewInputKeys
             );
+            
+            return TypingInputResult;
         }
         
         /// <summary>
@@ -196,12 +203,14 @@ namespace JpnTypingEngine
             {
                 foreach (var inputPair in hiraganaSection.InputPairs)
                 {                    
+                    //入力済みより短い場合除外
+                    if (inputPair.Length < newSectionInputtedKey.Length) continue;
+
+                    //一文字ずつチェックし、すべて一致していた場合追加
                     for (int i = 0; i < newSectionInputtedKey.Length; i++)
                     {
-                        if (inputPair.Length <= i) continue;
-                        
-                        //一文字ずつチェックし、すべて一致していた場合追加
-                        if (inputPair[i] == newSectionInputtedKey[i] && i == newSectionInputtedKey.Length - 1)
+                        if (inputPair[i] != newSectionInputtedKey[i]) break;
+                        if (i == newSectionInputtedKey.Length - 1)
                         {
                             return (hiraganaSection,inputPair);
                         }

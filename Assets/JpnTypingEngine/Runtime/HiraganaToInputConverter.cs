@@ -95,7 +95,9 @@ namespace JpnTypingEngine
                                 inputPairs.Insert(0, "n");
                                 
                                 //「ん」のn一回のときにn二回入力できるように、空のひらがなの「n」入力組み合わせを追加
-                                _hiraganaSections.Add(new HiraganaSection("", i+1, _nList));
+                                var addNList=ListPool<string>.Get();
+                                addNList.Add("n");
+                                _hiraganaSections.Add(new HiraganaSection("", i+1, addNList));
                             }
                         }
                     }
@@ -129,7 +131,7 @@ namespace JpnTypingEngine
                     
                     //つ　の後の文字
                     var nextHiraganaSections = InputCombination.GetHiraganaSections(i + tuCount);
-
+                    if(nextHiraganaSections == null) continue;  
                     foreach (var nextHiraganaSection in nextHiraganaSections)
                     {
                         var inputPairs = ListPool<string>.Get();
@@ -140,11 +142,6 @@ namespace JpnTypingEngine
                             inputPairs.Add(new string(inputPair[0], tuCount) + inputPair);
                         }
                         isSmallTuUpdate = true;
-                        
-                    # if UNITY_EDITOR
-                        Debug.Log("inputPairs:" + string.Join(",", inputPairs) + "hiragana" + new string('っ', tuCount) +
-                                  nextHiraganaSection.Hiragana);
-                    #endif
                         
                         //最初に追加
                         _hiraganaSections.Insert(0,new HiraganaSection(
