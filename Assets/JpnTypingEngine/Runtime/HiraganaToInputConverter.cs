@@ -216,6 +216,11 @@ namespace JpnTypingEngine
                     StartIndexToHiraganaSections.Add(hiraganaSection.StartIndex,sectionList);
                 }
             }
+            //StartIndexToHiraganaSectionsをsectionが大きい順に
+            foreach (var variable in StartIndexToHiraganaSections.Values)
+            {
+                variable.Sort((a, b) => b.Hiragana.Length - a.Hiragana.Length);
+            }
             
             return this;
         }
