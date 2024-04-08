@@ -50,7 +50,7 @@ namespace JpnTypingEngine.Samples.Demo
         {
             questionDisplay.UpdateInputKey(
                 typingInputResult.ViewInputKeys.ToString(),
-                typingInputResult.InputtedKeyLength,
+                typingInputResult.ViewInputtedKeys.Length,
                 hiraganaQuestionList[_questionIndex%hiraganaQuestionList.Count],
                 typingInputResult.InputtedHiragana.Length);
         }
