@@ -27,6 +27,11 @@ namespace JpnTypingEngine
         readonly StringBuilder _inputtedSectionKeys = new StringBuilder();
         //表示key
         readonly StringBuilder _viewInputKeys = new StringBuilder();
+        //表示、未入力のキー
+        readonly StringBuilder _viewNotInputKeys = new StringBuilder();
+        //表示、入力済みのキー
+        readonly StringBuilder _viewInputtedKeys = new StringBuilder();
+        
 
         private const string HiraganaKeyPairListAssetPath = "HiraganaKeyPairList";
 
@@ -57,7 +62,9 @@ namespace JpnTypingEngine
                 _currentSectionInputtedKey,
                 _inputtedHiragana,
                 _inputtedSectionKeys,
-                _viewInputKeys
+                _viewInputKeys,
+                _viewInputtedKeys,
+                _viewNotInputKeys
                 );
             
             //入力されたキーが、現在のセクションの選択キーと一致するか
@@ -79,13 +86,13 @@ namespace JpnTypingEngine
                     //追加したキーが、ミスのため最後のキーを削除
                     _currentSectionInputtedKey.Remove(_currentSectionInputtedKey.Length - 1, 1);
                     TypingInputResult.IsMiss = true;
-# if UNITY_EDITOR
+// # if UNITY_EDITOR
                     //エラーが発生した場合、エラーの行数を表示
-                    Debug.LogError(e.Message);
-                    System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(e, true);
-                    int lineNumber = stackTrace.GetFrame(0).GetFileLineNumber();
-                    Debug.LogError("lineNumber:"+lineNumber);
-#endif
+                    //Debug.LogError(e.Message);
+                    // System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(e, true);
+                    // int lineNumber = stackTrace.GetFrame(0).GetFileLineNumber();
+                    // Debug.LogError("lineNumber:"+lineNumber);
+// #endif
                 }
             }
             
@@ -109,7 +116,7 @@ namespace JpnTypingEngine
             }
 
 
-            GetAndSetViewInputKeys();
+            SetViewKeys();
             return TypingInputResult;
         }
         
@@ -124,13 +131,15 @@ namespace JpnTypingEngine
             
             SetSuggestSections(0);
             
-            GetAndSetViewInputKeys();
+            SetViewKeys();
             
             TypingInputResult = new TypingInputResult(
                 _currentSectionInputtedKey,
                 _inputtedHiragana,
                 _inputtedSectionKeys,
-                _viewInputKeys
+                _viewInputKeys,
+                _viewInputtedKeys,
+                _viewNotInputKeys
             );
             
             return TypingInputResult;
@@ -221,7 +230,7 @@ namespace JpnTypingEngine
             throw new Exception("値が見つかりませんでした");
         }
         
-        private StringBuilder GetAndSetViewInputKeys()
+        private void SetViewKeys()
         {
             //１つ目は_currentSectionSelectKey
             _viewInputKeys.Clear();
@@ -232,7 +241,13 @@ namespace JpnTypingEngine
                 _viewInputKeys.Append(_suggestHiraganaSections[i].InputPairs[0]);
             }
 
-            return _viewInputKeys;
+            _viewInputtedKeys.Clear();
+            _viewInputtedKeys.Append(_inputtedSectionKeys);
+            _viewInputtedKeys.Append(_currentSectionInputtedKey);
+            
+            _viewNotInputKeys.Clear();
+            _viewNotInputKeys.Append(_viewInputKeys);
+            _viewNotInputKeys.Remove(0, _viewInputtedKeys.Length);
         }
         
         

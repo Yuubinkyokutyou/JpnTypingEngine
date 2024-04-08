@@ -28,24 +28,35 @@ namespace JpnTypingEngine
         //表示用入力キー
         public StringBuilder ViewInputKeys;
         
+        // 表示、入力済みのキー
+        public StringBuilder ViewInputtedKeys;
+
+        //表示、未入力のキー
+        public StringBuilder ViewNotInputKeys;
+        
         public int InputtedKeyLength => InputtedSectionKeys.Length + CurrentSectionInputtedKey.Length;
         
         public TypingInputResult(
             StringBuilder currentSectionInputtedKey, 
             StringBuilder inputtedHiragana, 
             StringBuilder inputtedSectionKeys,
-            StringBuilder viewInputKeys
+            StringBuilder viewInputKeys,
+            StringBuilder viewInputtedKeys,
+            StringBuilder viewNotInputKeys
             )
         {
             CurrentSectionInputtedKey = currentSectionInputtedKey;
             InputtedHiragana = inputtedHiragana;
             InputtedSectionKeys = inputtedSectionKeys;
             ViewInputKeys = viewInputKeys;
+            ViewInputtedKeys = viewInputtedKeys;
+            ViewNotInputKeys = viewNotInputKeys;
+            
             IsFinished = false;
             IsMiss = false;
             IsSuccess = false;
             InputKeyChange = false;
         }
-        
+
     }
 }
