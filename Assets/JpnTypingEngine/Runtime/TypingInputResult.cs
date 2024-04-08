@@ -34,8 +34,6 @@ namespace JpnTypingEngine
         //表示、未入力のキー
         public StringBuilder ViewNotInputKeys;
         
-        public int InputtedKeyLength => InputtedSectionKeys.Length + CurrentSectionInputtedKey.Length;
-        
         public TypingInputResult(
             StringBuilder currentSectionInputtedKey, 
             StringBuilder inputtedHiragana, 
