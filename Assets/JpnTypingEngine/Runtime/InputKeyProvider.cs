@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace JpnTypingEngine.Samples.Demo
+namespace JpnTypingEngine
 {
     public class InputKeyProvider :Singleton<InputKeyProvider>
     {
