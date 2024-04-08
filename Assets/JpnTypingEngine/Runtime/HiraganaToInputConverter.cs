@@ -161,6 +161,39 @@ namespace JpnTypingEngine
             return InputCombination;
         }
 
+        /// <summary>
+        /// 非常に重い処理
+        /// すべての組み合わせのキーを取得
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetAllCombinationKeysUsesDanger()
+        {
+            var resultAllCombination = new List<string>();
+            
+            void ContinueKeys(StringBuilder keys,int hiraganaInputted)
+            {
+                if (hiraganaInputted == InputCombination.Hiragana.Length)
+                {
+                    resultAllCombination.Add(keys.ToString());
+                    return;
+                }
+                
+                var hiraganaSections = InputCombination.GetHiraganaSections(hiraganaInputted);
+                if (hiraganaSections == null) return;
+                
+                foreach (var hiraganaSection in hiraganaSections)
+                {
+                    foreach (var inputPair in hiraganaSection.InputPairs)
+                    {
+                        keys.Append(inputPair);
+                        ContinueKeys(new StringBuilder(keys.ToString()),hiraganaInputted + hiraganaSection.Hiragana.Length);
+                    }
+                }
+            }
+
+            return resultAllCombination;
+        }
+
         public void Dispose()
         {
             InputCombination?.Dispose();
