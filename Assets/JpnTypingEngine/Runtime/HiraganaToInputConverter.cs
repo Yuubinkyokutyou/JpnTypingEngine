@@ -170,6 +170,9 @@ namespace JpnTypingEngine
         {
             var resultAllCombination = new List<string>();
             
+            //再帰ですべての組み合わせを取得
+            ContinueKeys(new StringBuilder(),0);
+            
             void ContinueKeys(StringBuilder keys,int hiraganaInputted)
             {
                 if (hiraganaInputted == InputCombination.Hiragana.Length)
