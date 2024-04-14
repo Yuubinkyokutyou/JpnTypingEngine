@@ -188,7 +188,7 @@ namespace JpnTypingEngine
                 {
                     foreach (var inputPair in hiraganaSection.InputPairs)
                     {
-                        if(keys.Length==0) continue;
+                        if(hiraganaSection.Hiragana.Length==0) continue;
                         
                         keys.Append(inputPair);
                         ContinueKeys(new StringBuilder(keys.ToString()),hiraganaInputted + hiraganaSection.Hiragana.Length);
