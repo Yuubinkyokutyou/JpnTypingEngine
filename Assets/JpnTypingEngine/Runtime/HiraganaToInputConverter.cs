@@ -70,46 +70,70 @@ namespace JpnTypingEngine
                         inputPairs.Add(inputPair);
                     }
                     
-                    
-                    //「ん」の文字の例外処理
-                    //最後の文字の場合は追加しない
-                    if (j == 0 &&
-                        inputHiragana[i] == 'ん' && 
-                        i != inputHiragana.Length - 1)
-                    {
-                        for (var n = 0; n < NBeforeHiraganas.Length; n++)
-                        {
-                            var nBeforeHiragana = NBeforeHiraganas[n];
-                            //inputHiraganaのnBeforeHiragana.length文字後が存在するか
-                            //inputHiraganaの後の文字がnBeforeHiraganaでないか
-                            //TODO:Substringをキャッシュ出来そう
-                            if (i + nBeforeHiragana.Length < inputHiragana.Length &&
-                                inputHiragana.Substring(i + 1, nBeforeHiragana.Length) == nBeforeHiragana)
-                            {
-                                break;
-                            }
-                            
-                            //すべて不一致だった場合、nを追加
-                            if (n == NBeforeHiraganas.Length - 1)
-                            {
-                                inputPairs.Insert(0, "n");
-                                
-                                //「ん」のn一回のときにn二回入力できるように、空のひらがなの「n」入力組み合わせを追加
-                                var addNList=ListPool<string>.Get();
-                                addNList.Add("n");
-                                _hiraganaSections.Add(new HiraganaSection("", i+1, addNList));
-                            }
-                        }
-                    }
-                    
                     _hiraganaSections.Add(new HiraganaSection(_sectionHiragana.ToString(), i, inputPairs));
                 }
             }
             
-            //「っ」の処理で必要、先にセット
+            
+            
+            //「っ」「ん」の処理で必要、先にセット
             InputCombination.SetValue(inputHiragana, _hiraganaSections);
+            
+            bool isUpdateHiraganaSections = false;
+            
+            //「ん」の処理
+            for (var i = 0; i < inputHiragana.Length; i++)
+            {
+                //「ん」の文字の例外処理
+                //最後の文字の場合は追加しない
+                if (inputHiragana[i] == 'ん' && 
+                    i != inputHiragana.Length - 1)
+                {
+                    bool isAllNotMatch = true;
+                    for (var n = 0; n < NBeforeHiraganas.Length; n++)
+                    {
+                        var nBeforeHiragana = NBeforeHiraganas[n];
+                        //inputHiraganaのnBeforeHiragana.length文字後が存在するか
+                        //inputHiraganaの後の文字がnBeforeHiraganaでないか
+                        //TODO:Substringをキャッシュ出来そう
+                        if (i + nBeforeHiragana.Length < inputHiragana.Length &&
+                            inputHiragana.Substring(i + 1, nBeforeHiragana.Length) == nBeforeHiragana)
+                        {
+                            isAllNotMatch = false;
+                            break;
+                        }
+                    }
+                        
+                        
+                    //すべて不一致だった場合、nを追加
+                    if (isAllNotMatch)
+                    {
+                        // _hiraganaSections.Add(new HiraganaSection("ん", i, _nList));
+                        //
+                        // //「ん」のn一回のときにn二回入力できるように、空のひらがなの「n」入力組み合わせを追加
+                        // var addNList=ListPool<string>.Get();
+                        // addNList.Add("n");
+                        // _hiraganaSections.Add(new HiraganaSection("", i+1, addNList));
+                            
+                        //次のセクションの前ににn一回を追加したパターンを追加
+                        var nextHiraganaSections = InputCombination.GetHiraganaSections(i+ 1);
 
-            bool isSmallTuUpdate = false;
+                        for (int j = 0; j < nextHiraganaSections.Count; j++)
+                        {
+                            var inputPairs = ListPool<string>.Get();
+                            foreach (var inputPair in nextHiraganaSections[j].InputPairs)
+                            {
+                                inputPairs.Add("n"+inputPair);
+                            }
+                            _hiraganaSections.Insert(0,new HiraganaSection("ん"+nextHiraganaSections[j].Hiragana, i, inputPairs));
+                        }
+                        
+                        isUpdateHiraganaSections= true;
+                    }
+                }
+            }
+            
+
             //小さい「っ」の文字の例外処理
             for (var i = 0; i < inputHiragana.Length; i++)
             {
@@ -141,7 +165,7 @@ namespace JpnTypingEngine
                             if (inputPair.Length == 1) continue;
                             inputPairs.Add(new string(inputPair[0], tuCount) + inputPair);
                         }
-                        isSmallTuUpdate = true;
+                        isUpdateHiraganaSections = true;
                         
                         //最初に追加
                         _hiraganaSections.Insert(0,new HiraganaSection(
@@ -153,7 +177,7 @@ namespace JpnTypingEngine
                 }
             }
             
-            if (isSmallTuUpdate)
+            if (isUpdateHiraganaSections)
             {
                 InputCombination.SetValue(inputHiragana, _hiraganaSections);
             }
