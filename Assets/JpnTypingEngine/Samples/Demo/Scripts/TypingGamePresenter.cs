@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace JpnTypingEngine.Samples.Demo
 {
@@ -7,8 +8,8 @@ namespace JpnTypingEngine.Samples.Demo
     {
         [SerializeField] private QuestionDisplay questionDisplay;
         [SerializeField] InputKeyProvider inputKeyProvider;
+        [SerializeField] private Text allCombinationText;
         [SerializeField] List<string> hiraganaQuestionList;
-        
         private TypingGameSystem _typingGameSystem;
         
         int _questionIndex = 0;
@@ -25,6 +26,11 @@ namespace JpnTypingEngine.Samples.Demo
         {
             var result=_typingGameSystem.SetQuestion(hiraganaQuestion);
             UpdateView(result);
+            
+            // allCombinationText.text = _typingGameSystem.GetAllCombinations()[1];
+            //改行ですべて表示
+            Debug.Log(_typingGameSystem.GetAllCombinations().Count);
+            allCombinationText.text = string.Join("\n", _typingGameSystem.GetAllCombinations());
         }
 
         private void OnInputKey(char key)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -86,14 +87,20 @@ namespace JpnTypingEngine
                     //追加したキーが、ミスのため最後のキーを削除
                     _currentSectionInputtedKey.Remove(_currentSectionInputtedKey.Length - 1, 1);
                     TypingInputResult.IsMiss = true;
-// # if UNITY_EDITOR
-                    //エラーが発生した場合、エラーの行数を表示
-                    //Debug.LogError(e.Message);
-                    // System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(e, true);
-                    // int lineNumber = stackTrace.GetFrame(0).GetFileLineNumber();
-                    // Debug.LogError("lineNumber:"+lineNumber);
-// #endif
+# if UNITY_EDITOR
+                    Debug.LogError(e.Message);
+#endif
                 }
+//                 catch (Exception e)
+//                 {
+// # if UNITY_EDITOR
+//                     // エラーが発生した場合、エラーの行数を表示
+//                     Debug.LogError(e.Message);
+//                     System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(e, true);
+//                     int lineNumber = stackTrace.GetFrame(0).GetFileLineNumber();
+//                     Debug.LogError("lineNumber:"+lineNumber);
+// #endif
+//                 }
             }
             
             //セクションの入力が完了した場合
@@ -227,7 +234,7 @@ namespace JpnTypingEngine
                 }
             }
 
-            throw new Exception("値が見つかりませんでした");
+            throw new MissTypeException("タイプミスが発生しました。");
         }
         
         private void SetViewKeys()
@@ -250,10 +257,51 @@ namespace JpnTypingEngine
             _viewNotInputKeys.Remove(0, _viewInputtedKeys.Length);
         }
         
+        public List<string> GetAllCombinations()
+        {
+            // StartIndexに基づいてHiraganaSectionをソート
+            var sortedSections = _suggestHiraganaSections.OrderBy(section => section.StartIndex).ToList();
+
+            // 初期化: 空のリストのリストから開始
+            var results = new List<List<string>> { new List<string>() };
+
+            // SortedSectionsごとにループ
+            foreach (var section in sortedSections)
+            {
+                var newResults = new List<List<string>>();
+
+                // 現在の結果セットに対して、新しい入力ペアを追加したリストを生成
+                foreach (var result in results)
+                {
+                    foreach (var input in section.InputPairs)
+                    {
+                        var newResult = new List<string>(result) { input };
+                        newResults.Add(newResult);
+                    }
+                }
+
+                // 結果を更新
+                results = newResults;
+            }
+
+            // 最終的な組み合わせを文字列に結合して返す
+            return results.Select(resultList => string.Join("", resultList)).ToList();
+        }
+        
         
         public void Dispose()
         {
             _hiraganaToInputConverter?.Dispose();
+        }
+    }
+    
+    
+    
+    public class MissTypeException : Exception
+    {
+        public MissTypeException(string message)
+            : base(message)
+        {
         }
     }
 }
