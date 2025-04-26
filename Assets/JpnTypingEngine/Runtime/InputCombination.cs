@@ -7,7 +7,7 @@ namespace JpnTypingEngine
     /// <summary>
     /// ひらがなの文章の入力組み合わせ
     /// </summary>
-    public class InputCombination　: IDisposable
+    public class InputCombination : IDisposable
     {
         public string Hiragana { get; private set; }
         public List<HiraganaSection> HiraganaSections { get; private set; }
