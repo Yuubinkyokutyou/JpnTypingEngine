@@ -49,7 +49,9 @@ namespace JpnTypingEngine.Samples.Demo
                 return;
             }
 
+#if UNITY_EDITOR
             Debug.Log(result.IsMiss);
+#endif
             //ミスの時は、文字を揺らす
             if (result.IsMiss)
             {
