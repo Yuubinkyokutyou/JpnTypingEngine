@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace JpnTypingEngine
 {
+    /// <summary>
+    ///
+    /// </summary>
     [System.Serializable]
     public struct HiraganaKeyPair
     {

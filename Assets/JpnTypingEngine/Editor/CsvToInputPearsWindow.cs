@@ -54,10 +54,10 @@ namespace JpnTypingEngine.Editor
                     //Debug.Log(parseByComma[0]);
                 }
 
-                var pariList = ScriptableObject.CreateInstance<HiraganaKeyPairList>();
-                pariList.HiraganaKeyPairs = hiraganaKeyPairsList.ToArray();
+                var pariList = ScriptableObject.CreateInstance<HiraganaInputMapping>();
+                pariList.SetHiraganaKeyPairs(hiraganaKeyPairsList.ToArray());
 
-                var asset = (HiraganaKeyPairList)AssetDatabase.LoadAssetAtPath(path, typeof(HiraganaKeyPairList));
+                var asset = (HiraganaInputMapping)AssetDatabase.LoadAssetAtPath(path, typeof(HiraganaInputMapping));
                 if (asset == null)
                 {
                     AssetDatabase.CreateAsset(pariList, path);

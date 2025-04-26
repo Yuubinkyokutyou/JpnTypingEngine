@@ -36,13 +36,13 @@ namespace JpnTypingEngine
 
         private const string HiraganaKeyPairListAssetPath = "HiraganaKeyPairList";
 
-        public TypingGameSystem(HiraganaKeyPairList hiraganaKeyPairList=null)
+        public TypingGameSystem(HiraganaInputMapping hiraganaInputMapping=null)
         {
-            if (hiraganaKeyPairList == null)
+            if (hiraganaInputMapping == null)
             {
-                hiraganaKeyPairList = Resources.Load<HiraganaKeyPairList>(HiraganaKeyPairListAssetPath);
+                hiraganaInputMapping = Resources.Load<HiraganaInputMapping>(HiraganaKeyPairListAssetPath);
             }
-            _hiraganaToInputConverter = new HiraganaToInputConverter(hiraganaKeyPairList);
+            _hiraganaToInputConverter = new HiraganaToInputConverter(hiraganaInputMapping);
         }
         
         

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37bbecb16a524dd78953f49bda3d3f99, type: 3}
-  m_Name: HiraganaKeyPairList
+  m_Name: 
   m_EditorClassIdentifier: 
-  MaxHiraganaLength: 4
-  HiraganaKeyPairs:
+  maxHiraganaLength: 4
+  hiraganaKeyPairs:
   - Hiragana: "\u3042"
     InputPairs:
     - a
