@@ -127,15 +127,9 @@ namespace JpnTypingEngine.TypingGameSystem
             return _hiraganaToInputConverter.GetAllCombinationKeysUsesDanger();
         }
 
-        /// <summary>
-        ///     リソースを解放する（現在は特に解放対象なし）
-        /// </summary>
         public void Dispose()
         {
-            // _hiraganaToInputConverter など、内部で保持しているオブジェクトが
-            // IDisposable を実装している場合は、ここで Dispose() を呼び出す
-            // 例: _hiraganaToInputConverter?.Dispose();
-            GC.SuppressFinalize(this);
+            _hiraganaToInputConverter?.Dispose();
         }
     }
 }
