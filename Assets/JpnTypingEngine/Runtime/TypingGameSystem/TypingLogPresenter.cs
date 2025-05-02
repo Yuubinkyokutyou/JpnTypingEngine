@@ -20,7 +20,7 @@ namespace JpnTypingEngine.TypingGameSystem
         /// </summary>
         /// <param name="manager">接続するタイピングゲームマネージャー</param>
         /// <param name="typingHistoryLogger"></param>
-        public void ConnectToManager(TypingGameManager manager, TypingHistoryLogger typingHistoryLogger)
+        public TypingLogPresenter(TypingGameManager manager, TypingHistoryLogger typingHistoryLogger)
         {
             if (manager == null)
                 throw new ArgumentNullException(nameof(manager));
