@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 #endregion
 
@@ -18,6 +19,14 @@ namespace JpnTypingEngine.TypingGameSystem
         private readonly TypingState _state;
         private readonly TypingLogic _logic;
         private readonly TypingViewDataBuilder _viewBuilder;
+        
+        // タイピングログイベントを発行するためのSubject
+        private readonly Subject<TypingLogEntry> _typingLogSubject = new Subject<TypingLogEntry>();
+        
+        /// <summary>
+        ///     タイピングログエントリーの購読可能なObservable
+        /// </summary>
+        public IObservable<TypingLogEntry> TypingLogObservable => _typingLogSubject;
 
         // HiraganaInputMappingの読み込みパス（外部から注入する方が望ましい）
         private const string HiraganaKeyPairListAssetPath = "HiraganaKeyPairList";
@@ -69,6 +78,16 @@ namespace JpnTypingEngine.TypingGameSystem
             var result = _logic.ProcessInput(key);
             // 表示用データを更新
             _viewBuilder.UpdateViewKeys(_state);
+
+            // TypingLogEntryイベントを発行
+            var logEntry = new TypingLogEntry
+            {
+                InputKey = key,
+                Result = result,
+                Timestamp = Time.time
+                // 必要に応じて詳細情報を追加可能
+            };
+            _typingLogSubject.OnNext(logEntry);
 
             // 結果オブジェクトに最新の状態を反映
             return result;
@@ -130,6 +149,7 @@ namespace JpnTypingEngine.TypingGameSystem
         public void Dispose()
         {
             _hiraganaToInputConverter?.Dispose();
+            _typingLogSubject?.Dispose();
         }
     }
 }

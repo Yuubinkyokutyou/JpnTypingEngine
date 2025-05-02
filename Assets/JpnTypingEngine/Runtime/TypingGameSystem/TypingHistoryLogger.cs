@@ -3,18 +3,25 @@
 using System;
 using System.Collections.Generic;
 using UniRx;
-using JpnTypingEngine.TypingGameSystem; // using ディレクティブを追加
+
+// using ディレクティブを追加
 
 #endregion
 
 namespace JpnTypingEngine.TypingGameSystem
 {
     /// <summary>
-    ///     タイピング入力履歴を記録するクラス (UniRx版)
+    ///     タイピング入力履歴を記録するクラス
     /// </summary>
-    public class TypingHistoryLoggerRx : IDisposable, ITypingLogHistoryProvider // ITypingLogHistoryProvider を実装
+    public class TypingHistoryLogger : IDisposable, ITypingLogHistoryProvider
     {
         private readonly CompositeDisposable _disposables = new();
+        private readonly Subject<TypingLogEntry> _onLogAdded = new Subject<TypingLogEntry>();
+
+        /// <summary>
+        ///     ログが追加された時に発行されるイベント
+        /// </summary>
+        public IObservable<TypingLogEntry> OnLogAdded => _onLogAdded;
 
         /// <summary>
         ///     記録されたログのリスト（読み取り専用）
@@ -23,16 +30,15 @@ namespace JpnTypingEngine.TypingGameSystem
 
         private readonly List<TypingLogEntry> _logHistory = new();
 
+
         /// <summary>
-        ///     コンストラクタ
+        ///     タイピングログを追加します
         /// </summary>
-        /// <param name="inputStream">購読する入力イベントストリーム</param>
-        public TypingHistoryLoggerRx(IObservable<TypingLogEntry> inputStream)
+        /// <param name="logEntry">追加するログエントリ</param>
+        public void AddLog(TypingLogEntry logEntry)
         {
-            // 入力イベントストリームを購読し、ログリストに追加する
-            inputStream
-                .Subscribe(entry => _logHistory.Add(entry))
-                .AddTo(_disposables); // Dispose時に購読解除されるように登録
+            _logHistory.Add(logEntry);
+            _onLogAdded.OnNext(logEntry);
         }
 
         /// <summary>
