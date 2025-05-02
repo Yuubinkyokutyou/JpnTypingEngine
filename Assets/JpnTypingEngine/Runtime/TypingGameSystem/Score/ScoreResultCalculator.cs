@@ -1,20 +1,36 @@
+#region
+
 using System.Collections.Generic;
 using System.Linq;
-using JpnTypingEngine.TypingGameSystem; // using ディレクティブを追加
 
-namespace JpnTypingEngine.TypingGameSystem
+#endregion
+
+// using ディレクティブを追加
+
+namespace JpnTypingEngine.TypingGameSystem.Score
 {
     /// <summary>
-    /// タイピング履歴から最終的なスコア結果を計算するクラス
+    ///     タイピング履歴から最終的なスコア結果を計算するクラス
     /// </summary>
-    public static class ScoreResultCalculator
+    public class ScoreResultCalculator
     {
+        private readonly ITypingLogHistoryProvider _logHistoryProvider;
+
         /// <summary>
-        /// 指定されたタイピングログ履歴からスコア結果を計算します。
+        ///     タイピングログ履歴プロバイダーを注入するコンストラクタ
+        /// </summary>
+        /// <param name="logHistoryProvider">タイピングログ履歴プロバイダー</param>
+        public ScoreResultCalculator(ITypingLogHistoryProvider logHistoryProvider)
+        {
+            _logHistoryProvider = logHistoryProvider;
+        }
+        
+        /// <summary>
+        ///     指定されたタイピングログ履歴からスコア結果を計算します。
         /// </summary>
         /// <param name="logHistory">計算対象のログ履歴</param>
         /// <returns>計算されたスコア結果</returns>
-        public static ScoreResult CalculateResult(IReadOnlyList<TypingLogEntry> logHistory)
+        public ScoreResult CalculateResult(IReadOnlyList<TypingLogEntry> logHistory)
         {
             if (logHistory == null || logHistory.Count == 0)
             {
@@ -48,13 +64,12 @@ namespace JpnTypingEngine.TypingGameSystem
         }
 
         /// <summary>
-        /// ITypingLogHistoryProvider インスタンスからスコア結果を計算します。
+        ///     注入されたITypingLogHistoryProviderインスタンスからスコア結果を計算します。
         /// </summary>
-        /// <param name="provider">タイピングログ履歴プロバイダー</param>
         /// <returns>計算されたスコア結果</returns>
-        public static ScoreResult CalculateResult(ITypingLogHistoryProvider provider) // 引数の型を ITypingLogHistoryProvider に変更
+        public ScoreResult CalculateResult()
         {
-            return CalculateResult(provider.LogHistory); // provider.LogHistory を使用
+            return CalculateResult(_logHistoryProvider.LogHistory);
         }
     }
 }
