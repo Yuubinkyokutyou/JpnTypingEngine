@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using UniRx;
+using JpnTypingEngine.TypingGameSystem; // using ディレクティブを追加
 
 #endregion
 
@@ -11,7 +12,7 @@ namespace JpnTypingEngine.TypingGameSystem
     /// <summary>
     ///     タイピング入力履歴を記録するクラス (UniRx版)
     /// </summary>
-    public class TypingHistoryLoggerRx : IDisposable
+    public class TypingHistoryLoggerRx : IDisposable, ITypingLogHistoryProvider // ITypingLogHistoryProvider を実装
     {
         private readonly CompositeDisposable _disposables = new();
 

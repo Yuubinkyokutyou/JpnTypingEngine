@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using JpnTypingEngine.TypingGameSystem; // using ディレクティブを追加
 
 namespace JpnTypingEngine.TypingGameSystem
 {
@@ -47,13 +48,13 @@ namespace JpnTypingEngine.TypingGameSystem
         }
 
         /// <summary>
-        /// TypingHistoryLoggerRx インスタンスからスコア結果を計算します。
+        /// ITypingLogHistoryProvider インスタンスからスコア結果を計算します。
         /// </summary>
-        /// <param name="logger">タイピング履歴ロガー</param>
+        /// <param name="provider">タイピングログ履歴プロバイダー</param>
         /// <returns>計算されたスコア結果</returns>
-        public static ScoreResult CalculateResult(TypingHistoryLoggerRx logger)
+        public static ScoreResult CalculateResult(ITypingLogHistoryProvider provider) // 引数の型を ITypingLogHistoryProvider に変更
         {
-            return CalculateResult(logger.LogHistory);
+            return CalculateResult(provider.LogHistory); // provider.LogHistory を使用
         }
     }
 }
