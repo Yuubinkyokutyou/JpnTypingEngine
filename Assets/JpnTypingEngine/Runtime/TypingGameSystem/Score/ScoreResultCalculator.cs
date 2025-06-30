@@ -56,8 +56,8 @@ namespace JpnTypingEngine.TypingGameSystem.Score
             int totalTypes = successCount + missCount;
             float accuracy = (totalTypes > 0) ? (float)successCount / totalTypes : 0f;
 
-            // 最後のログエントリのタイムスタンプを取得して経過時間とする
-            float elapsedTime = logHistory.LastOrDefault().Timestamp;
+            // 最初と最後のログエントリのタイムスタンプを取得して経過時間とする
+            float elapsedTime =　logHistory.LastOrDefault().Timestamp - logHistory.FirstOrDefault().Timestamp;
             float keysPerSecond = (elapsedTime > 0 && successCount > 0) ? successCount / elapsedTime : 0f;
 
             return new ScoreResult(successCount, missCount, accuracy, keysPerSecond);
