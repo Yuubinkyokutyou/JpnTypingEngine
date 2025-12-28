@@ -215,6 +215,7 @@ namespace JpnTypingEngine
                         
                         keys.Append(inputPair);
                         ContinueKeys(new StringBuilder(keys.ToString()),hiraganaInputted + hiraganaSection.Hiragana.Length);
+                        keys.Remove(keys.Length - inputPair.Length, inputPair.Length);
                     }
                 }
             }
